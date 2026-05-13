@@ -1,2 +1,0 @@
-# Shruthi_pettige_mobileapptest
-Shruthi_pettige_mobileapptest
