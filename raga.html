@@ -1,0 +1,1335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Carnatic Shruthi Box - Pitch & Raga Identifier</title>
+  <style>
+    :root {
+      --bg: #0a0a0a; --card: #151515; --text: #ffffff;
+      --acc: #00e5ff; --acc-hover: #00b0ff;
+      --btn-bg: #1f1f1f; --border: #333;
+      --ff: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: var(--ff); }
+    body {
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    min-height: 100vh;
+    box-sizing: border-box; background: var(--bg); color: var(--text); display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; padding: 10px; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px; width: 100%; max-width: 500px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); position: relative; }
+    h1 { text-align: center; font-size: clamp(1rem, 4vw, 1.5rem); margin-bottom: 14px; color: var(--acc); letter-spacing: 1px; text-transform: uppercase; }
+    .app-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      flex-wrap: nowrap;
+      margin-bottom: 10px;
+      position: relative;
+      min-width: 0;
+    }
+    .app-header h1 {
+      flex: 1 1 0;
+      min-width: 0;
+      margin: 0;
+      font-size: clamp(0.72rem, 3.5vw, 1.35rem);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .header-btns {
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 4px;
+      flex-shrink: 0;
+      align-items: center;
+    }
+    .lang-btn, .theme-btn {
+      background: transparent;
+      border: 1px solid var(--acc); color: var(--acc);
+      padding: 3px 7px; border-radius: 4px; cursor: pointer;
+      font-size: clamp(0.6rem, 2.5vw, 0.8rem); font-weight: bold; transition: 0.3s;
+      position: static;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .theme-btn { font-size: 1.1rem; display: flex; align-items: center; justify-content: center; }
+    .lang-btn:hover, .theme-btn:hover { background: var(--acc); color: #fff; }
+    @media (max-width: 360px) {
+      .lang-btn, .theme-btn { padding: 2px 5px; font-size: 0.60rem; }
+      .app-header h1 { font-size: 0.68rem; }
+      .app-header { gap: 4px; }
+    }
+
+    .pitch-display { text-align: center; margin: 25px 0; padding: 10px; background: #111; border-radius: 10px; border: 2px dashed var(--border); transition: border-color 0.3s; }
+    .pitch-display.active { border-color: var(--acc); box-shadow: 0 0 15px rgba(0,229,255,0.2); }
+    .big-swara { font-size: 4rem; font-weight: bold; color: var(--acc); margin-bottom: 5px; height: 80px; display: flex; align-items: center; justify-content: center; }
+    .hz-val { font-size: 1rem; color: #888; font-family: monospace; }
+
+    .history-box { background: #1a1a1a; padding: 15px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 20px; min-height: 80px; }
+    .history-title { font-size: 0.8rem; color: #888; margin-bottom: 10px; display: flex; justify-content: space-between; }
+    .clear-btn { background: none; border: none; color: var(--acc); cursor: pointer; font-size: 0.8rem; text-decoration: underline; }
+    .swara-trace { display: flex; flex-wrap: wrap; gap: 8px; font-size: 1.1rem; font-weight: bold; color: #ddd; }
+
+    .raga-matches { background: #1a1a1a; padding: 15px; border-radius: 8px; border: 1px solid var(--border); min-height: 80px; }
+    .raga-matches h3 { font-size: 0.9rem; color: #bbb; margin-bottom: 10px; }
+    .match-item { background: #222; padding: 8px 12px; border-radius: 4px; margin-bottom: 6px; font-size: 0.9rem; display: flex; justify-content: space-between; border-left: 3px solid var(--acc); }
+    .match-type { font-size: 0.7rem; color: #888; text-transform: uppercase; background: #333; padding: 2px 6px; border-radius: 4px; }
+
+    .btn-row { display: flex; gap: 15px; justify-content: center; margin-top: 15px; }
+    .mic-btn { flex: 1; padding: 12px; font-size: 1rem; font-weight: bold; border: none; border-radius: 6px; cursor: pointer; transition: 0.3s; background: var(--btn-bg); color: var(--text); border: 1px solid var(--acc); -webkit-tap-highlight-color: transparent; }
+    .mic-btn.listening { background: var(--acc); color: #000; box-shadow: 0 0 15px var(--acc); }
+    
+    .ai-btn:hover, .ai-btn:active { background: #7c3aed; color: #fff; }
+    .ai-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .match-item.top-match { font-size: 1.1rem; background: #112211; border-left: 5px solid #76ff03; padding: 12px 15px; margin-bottom: 12px; box-shadow: 0 4px 10px rgba(118,255,3,0.1); }
+    .match-item.top-match strong { color: #76ff03; font-size: 1.3rem; letter-spacing: 1px; }
+
+    
+    
+    
+    
+    
+     50%{opacity:0.3;} }
+
+    
+
+    
+
+    /* iOS Safari scroll fix */
+    @supports (-webkit-touch-callout: none) {
+      body {
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    min-height: 100vh;
+    box-sizing: border-box; min-height: -webkit-fill-available; }
+    }
+  
+/* Free Trial Bar */
+.trial-bar.pro-unlocked { display: none !important; }
+.trial-bar { background: linear-gradient(90deg,#1a0a00,#2e1500); border:1px solid #ff9800; border-radius:8px; padding:8px 12px; margin-bottom:14px; display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:nowrap; }
+.trial-info { flex:1; min-width:0; }
+.trial-label { font-size:0.7rem; color:#aaa; text-transform:uppercase; letter-spacing:0.5px; }
+.trial-progress-wrap { background:#333; border-radius:4px; height:6px; margin-top:4px; }
+.trial-progress-fill { height:6px; border-radius:4px; background:linear-gradient(90deg,#ff9800,#ff5722); width:100%; transition:width 0.4s; }
+.trial-count { font-size:0.72rem; color:#ff9800; margin-top:3px; }
+.btn-promax { background:linear-gradient(135deg,#ff9800,#ff5722); color:#fff; border:none; padding:7px 12px; border-radius:6px; font-size:0.78rem; font-weight:700; cursor:pointer; white-space:nowrap; box-shadow:0 0 10px rgba(255,152,0,0.5); transition:all 0.2s; }
+.btn-promax:hover { transform:scale(1.05); box-shadow:0 0 18px rgba(255,152,0,0.8); }
+
+/* ProMax Modal */
+.promax-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:9999; align-items:center; justify-content:center; }
+.promax-overlay.show { display:flex; }
+.promax-modal { background:#151515; border:1px solid #ff9800; border-radius:14px; padding:28px 24px; max-width:360px; width:92%; text-align:center; box-shadow:0 0 40px rgba(255,152,0,0.3); position:relative; }
+.promax-close { position:absolute; top:12px; right:14px; background:none; border:none; color:#888; font-size:1.4rem; cursor:pointer; }
+.promax-crown { font-size:2.8rem; margin-bottom:8px; }
+.promax-title { font-size:1.3rem; font-weight:800; color:#ff9800; margin-bottom:6px; }
+.promax-sub { font-size:0.85rem; color:#aaa; margin-bottom:18px; }
+.promax-features { list-style:none; padding:0; margin:0 0 20px 0; text-align:left; }
+.promax-features li { padding:6px 0; font-size:0.88rem; color:#ddd; border-bottom:1px solid #222; }
+.promax-features li::before { content:"✅ "; }
+.btn-subscribe { width:100%; background:linear-gradient(135deg,#ff9800,#ff5722); color:#fff; border:none; padding:13px; border-radius:8px; font-size:1rem; font-weight:700; cursor:pointer; box-shadow:0 0 15px rgba(255,152,0,0.5); transition:all 0.2s; }
+.btn-subscribe:hover { transform:scale(1.03); }
+.promax-note { font-size:0.72rem; color:#666; margin-top:10px; }
+
+/* ── Watermark inside card ── */
+.wm-card {
+  text-align: center; font-size: .56rem; color: #888;
+  padding: 8px 0 2px; opacity: .42;
+  border-top: 1px solid #333; margin-top: 15px;
+  letter-spacing: .05em;
+}
+    /* Prevent Overlapping on Mobile Screens */
+    .controls-grid, .flex-row, .setting-row, .control-group {
+        flex-wrap: wrap !important;
+        gap: 15px !important;
+        justify-content: space-between;
+    }
+    
+    /* Ensure individual control blocks take full width if they get too squeezed */
+    .control-item {
+        flex: 1 1 100% !important;
+        min-width: 0 !important;
+    }
+
+    @media (min-width: 480px) {
+        .control-item {
+            flex: 1 1 45% !important;
+        }
+    }
+
+    /* Target specific inline flex styles that force nowrap and cause overlapping */
+    div[style*="display: flex"][style*="justify-content: space-between"] {
+        flex-wrap: wrap !important;
+    }
+    div[style*="display: flex"][style*="gap: 10px"] {
+        flex-wrap: wrap !important;
+    }
+
+    /* Make sure select dropdowns and buttons never overflow their containers */
+    select, button, input[type="range"] {
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+    
+    /* Adjust overlapping toggles */
+    .toggle-container {
+        flex-wrap: wrap !important;
+        margin-bottom: 10px;
+    }
+
+@media (max-width: 420px) {
+  .app-header { gap: 6px; }
+  h1 { font-size: .95rem; }
+  .lang-btn, .theme-btn { padding: 3px 7px; font-size: .68rem; }
+  .card { padding: 12px; }
+}
+
+
+  /* ── Pro Unlock Toast ─────────────────────────────────────────────── */
+  #proToast {
+    display: none;
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-20px);
+    background: linear-gradient(135deg, #1b5e20, #2e7d32);
+    color: #fff;
+    padding: 13px 20px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    box-shadow: 0 6px 28px rgba(0,200,80,0.4);
+    z-index: 99999;
+    text-align: center;
+    max-width: 90vw;
+    width: max-content;
+    border: 1px solid #4caf50;
+    opacity: 0;
+    transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.16,1,0.3,1);
+    pointer-events: none;
+  }
+  #proToast.show {
+    display: block !important;
+    opacity: 1 !important;
+    transform: translateX(-50%) translateY(0) !important;
+  }
+  #proToast.hide {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-14px);
+  }
+
+  </style>
+<script>
+  // Hide trial bar immediately before render if already subscribed (no flash)
+  (function(){
+    try{
+      if(localStorage.getItem('raga_promax_v1')==='active'){
+        document.addEventListener('DOMContentLoaded',function(){
+          var tb=document.getElementById('trialBar');
+          if(tb){tb.style.display='none';tb.classList.add('pro-unlocked');}
+        });
+        // Also inject a <style> tag right now for instant hide
+        var s=document.createElement('style');
+        s.textContent='#trialBar{display:none!important}';
+        document.head.appendChild(s);
+      }
+    }catch(e){}
+  })();
+</script>
+</head>
+<body>
+<div id="proToast">✅ Thank you for subscribing! Full features are unlocked!</div>
+<div class="card">
+  <div class="app-header">
+    <h1 id="tTitle">Raga &amp; Pitch Identifier</h1>
+    <div class="header-btns">
+      <button class="theme-btn" id="themeToggle">🎨</button>
+      <button class="lang-btn" id="langToggle">ಕನ್ನಡ</button>
+    </div>
+  </div>
+
+<!-- Free Trial Bar -->
+<div class="trial-bar" id="trialBar">
+  <div class="trial-info">
+    <div class="trial-label" id="trialLbl">Free Trial</div>
+    <div class="trial-progress-wrap">
+      <div class="trial-progress-fill" id="trialFill"></div>
+    </div>
+    <div class="trial-count" id="trialCount">1:00 remaining</div>
+  </div>
+  <button class="btn-promax" id="btnProMax">⭐ Get it</button>
+</div>
+
+  <div class="btn-row" style="margin-top:0;margin-bottom:14px;">
+    <button class="mic-btn" id="btnMic">🎤 Start Microphone</button>
+  </div>
+
+
+<!-- ProMax Modal -->
+<div class="promax-overlay" id="promaxOverlay">
+  <div class="promax-modal">
+    <button class="promax-close" id="promaxClose">✕</button>
+    <div class="promax-crown">👑</div>
+	<div>✅ Subscription unlocks full app on this device </div>
+    <div class="promax-title">Carnatic Pitch Pro</div>
+    <div class="promax-sub">Unlock the full Carnatic experience</div>
+    <ul class="promax-features">
+      <li>Unlimited Pitch identification</li>
+      <li>Advanced Raga & Krithi matching</li>
+      <li>More Ragas/Krithis to come!</li>
+      <li>Offline mode &amp; no ads</li>
+	  <li>Raga/Krithi features are currently experimental)</li>
+    </ul>
+    <button class="btn-subscribe" id="btnSubscribe">Subscribe ₹99/year</button>
+    <div class="promax-note">Your contribution encourages app developer to release regular quality updates.</div>
+	<div class="promax-note">Pitch Pro only. Cancel anytime.</div>
+  </div>
+</div>
+
+  <div class="pitch-display" id="pitchBox" style="position:relative;overflow:hidden;">
+    <canvas id="vizCanvas" style="position:absolute;top:0;left:0;width:100%;height:100%;z-index:0;opacity:0.3;"></canvas>
+    <div style="position:relative;z-index:1;">
+      <div class="big-swara" id="noteDisp" style="text-shadow:0 4px 10px rgba(0,0,0,0.8);">--</div>
+      <div class="hz-val" style="font-size:1.5rem;margin-top:10px;">
+        <strong id="swaraDisp" style="color:var(--acc);">-</strong> &nbsp;|&nbsp;
+        <span id="hzDisp" style="color:#aaa;">0.0 Hz</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="history-box">
+    <div class="history-title">
+      <span id="lblTrace">Sung Swaras <span id="rootIndicator" style="color:var(--acc);margin-left:10px;font-weight:bold;"></span></span>
+      <button class="clear-btn" id="btnClear">Clear Trace</button>
+    </div>
+    <div class="swara-trace" id="traceBox"></div>
+  </div>
+
+  <div class="raga-matches">
+    <h3 id="lblMatches">Possible Ragas</h3>
+    <div id="matchList">
+      <div style="color:#666;font-size:0.8rem;text-align:center;margin-top:20px;" id="lblNoNotes">Sing into the microphone to identify ragas...</div>
+    </div>
+  </div>
+
+  <div class="raga-matches" style="margin-top:15px;">
+    <h3 id="lblKrithi">Composition (Krithi) Matches</h3>
+    <div id="krithiList">
+      <div style="color:#666;font-size:0.8rem;text-align:center;margin-top:10px;" id="lblNoKrithi">Sing a longer phrase to identify compositions...</div>
+    </div>
+  </div>
+
+  <div class="wm-card">🎵 By Subrahmanya Sripadu</div>
+</div>
+
+<script>
+// ─── DATA ─────────────────────────────────────────────────────────────────────
+const RAGAS = [{"id":1,"en":"1. Kanakangi","kn":"1. ಕನಕಾಂಗಿ","intervals":[0,1,2,5,7,8,9,12],"swaras":["S","R1","G1","M1","P","D1","N1","S'"]},{"id":2,"en":"2. Ratnangi","kn":"2. ರತ್ನಾಂಗಿ","intervals":[0,1,2,5,7,8,10,12],"swaras":["S","R1","G1","M1","P","D1","N2","S'"]},{"id":3,"en":"3. Ganamurti","kn":"3. ಗಾನಮೂರ್ತಿ","intervals":[0,1,2,5,7,8,11,12],"swaras":["S","R1","G1","M1","P","D1","N3","S'"]},{"id":4,"en":"4. Vanaspati","kn":"4. ವನಸ್ಪತಿ","intervals":[0,1,2,5,7,9,10,12],"swaras":["S","R1","G1","M1","P","D2","N2","S'"]},{"id":5,"en":"5. Manavati","kn":"5. ಮಾನವತಿ","intervals":[0,1,2,5,7,9,11,12],"swaras":["S","R1","G1","M1","P","D2","N3","S'"]},{"id":6,"en":"6. Tanarupi","kn":"6. ತಾನರೂಪಿ","intervals":[0,1,2,5,7,10,11,12],"swaras":["S","R1","G1","M1","P","D3","N3","S'"]},{"id":7,"en":"7. Senavati","kn":"7. ಸೇನಾವತಿ","intervals":[0,1,3,5,7,8,9,12],"swaras":["S","R1","G2","M1","P","D1","N1","S'"]},{"id":8,"en":"8. Hanumatodi","kn":"8. ಹನುಮತೋಡಿ","intervals":[0,1,3,5,7,8,10,12],"swaras":["S","R1","G2","M1","P","D1","N2","S'"]},{"id":9,"en":"9. Dhenuka","kn":"9. ಧೇನುಕ","intervals":[0,1,3,5,7,8,11,12],"swaras":["S","R1","G2","M1","P","D1","N3","S'"]},{"id":10,"en":"10. Natakapriya","kn":"10. ನಾಟಕಪ್ರಿಯ","intervals":[0,1,3,5,7,9,10,12],"swaras":["S","R1","G2","M1","P","D2","N2","S'"]},{"id":11,"en":"11. Kokilapriya","kn":"11. ಕೋಕಿಲಪ್ರಿಯ","intervals":[0,1,3,5,7,9,11,12],"swaras":["S","R1","G2","M1","P","D2","N3","S'"]},{"id":12,"en":"12. Rupavati","kn":"12. ರೂಪವತಿ","intervals":[0,1,3,5,7,10,11,12],"swaras":["S","R1","G2","M1","P","D3","N3","S'"]},{"id":13,"en":"13. Gayakapriya","kn":"13. ಗಾಯಕಪ್ರಿಯ","intervals":[0,1,4,5,7,8,9,12],"swaras":["S","R1","G3","M1","P","D1","N1","S'"]},{"id":14,"en":"14. Vakulabharanam","kn":"14. ವಕುಳಾಭರಣಂ","intervals":[0,1,4,5,7,8,10,12],"swaras":["S","R1","G3","M1","P","D1","N2","S'"]},{"id":15,"en":"15. Mayamalavagowla","kn":"15. ಮಾಯಾಮಾಳವಗೌಳ","intervals":[0,1,4,5,7,8,11,12],"swaras":["S","R1","G3","M1","P","D1","N3","S'"]},{"id":16,"en":"16. Chakravakam","kn":"16. ಚಕ್ರವಾಕಂ","intervals":[0,1,4,5,7,9,10,12],"swaras":["S","R1","G3","M1","P","D2","N2","S'"]},{"id":17,"en":"17. Suryakantam","kn":"17. ಸೂರ್ಯಕಾಂತಂ","intervals":[0,1,4,5,7,9,11,12],"swaras":["S","R1","G3","M1","P","D2","N3","S'"]},{"id":18,"en":"18. Hatakambari","kn":"18. ಹಾಟಕಾಂರಿ","intervals":[0,1,4,5,7,10,11,12],"swaras":["S","R1","G3","M1","P","D3","N3","S'"]},{"id":19,"en":"19. Jhankaradhvani","kn":"19. ಝಂಕಾರಧ್ವನಿ","intervals":[0,2,3,5,7,8,9,12],"swaras":["S","R2","G2","M1","P","D1","N1","S'"]},{"id":20,"en":"20. Natabhairavi","kn":"20. ನಟಭೈರವಿ","intervals":[0,2,3,5,7,8,10,12],"swaras":["S","R2","G2","M1","P","D1","N2","S'"]},{"id":21,"en":"21. Keeravani","kn":"21. ಕೀರವಾಣಿ","intervals":[0,2,3,5,7,8,11,12],"swaras":["S","R2","G2","M1","P","D1","N3","S'"]},{"id":22,"en":"22. Kharaharapriya","kn":"22. ಖರಹರಪ್ರಿಯ","intervals":[0,2,3,5,7,9,10,12],"swaras":["S","R2","G2","M1","P","D2","N2","S'"]},{"id":23,"en":"23. Gourimanohari","kn":"23. ಗೌರಿಮನೋಹರಿ","intervals":[0,2,3,5,7,9,11,12],"swaras":["S","R2","G2","M1","P","D2","N3","S'"]},{"id":24,"en":"24. Varunapriya","kn":"24. ವರುಣಪ್ರಿಯ","intervals":[0,2,3,5,7,10,11,12],"swaras":["S","R2","G2","M1","P","D3","N3","S'"]},{"id":25,"en":"25. Mararanjani","kn":"25. ಮಾರರಂಜನಿ","intervals":[0,2,4,5,7,8,9,12],"swaras":["S","R2","G3","M1","P","D1","N1","S'"]},{"id":26,"en":"26. Charukesi","kn":"26. ಚಾರುಕೇಶಿ","intervals":[0,2,4,5,7,8,10,12],"swaras":["S","R2","G3","M1","P","D1","N2","S'"]},{"id":27,"en":"27. Sarasangi","kn":"27. ಸರಸಾಂಗಿ","intervals":[0,2,4,5,7,8,11,12],"swaras":["S","R2","G3","M1","P","D1","N3","S'"]},{"id":28,"en":"28. Harikambhoji","kn":"28. ಹರಿಕಾಂಭೋಜಿ","intervals":[0,2,4,5,7,9,10,12],"swaras":["S","R2","G3","M1","P","D2","N2","S'"]},{"id":29,"en":"29. Dheerasankarabharanam","kn":"29. ಧೀರಶಂಕರಾಭರಣಂ","intervals":[0,2,4,5,7,9,11,12],"swaras":["S","R2","G3","M1","P","D2","N3","S'"]},{"id":30,"en":"30. Naganandini","kn":"30. ನಾಗನಂದಿನಿ","intervals":[0,2,4,5,7,10,11,12],"swaras":["S","R2","G3","M1","P","D3","N3","S'"]},{"id":31,"en":"31. Yagapriya","kn":"31. ಯಾಗಪ್ರಿಯ","intervals":[0,3,4,5,7,8,9,12],"swaras":["S","R3","G3","M1","P","D1","N1","S'"]},{"id":32,"en":"32. Ragavardhini","kn":"32. ರಾಗವರ್ಧಿನಿ","intervals":[0,3,4,5,7,8,10,12],"swaras":["S","R3","G3","M1","P","D1","N2","S'"]},{"id":33,"en":"33. Gangeyabushani","kn":"33. ಗಾಂಗೆಯಭೂಷಣಿ","intervals":[0,3,4,5,7,8,11,12],"swaras":["S","R3","G3","M1","P","D1","N3","S'"]},{"id":34,"en":"34. Vagadheeswari","kn":"34. ವಾಗಧೀಶ್ವರಿ","intervals":[0,3,4,5,7,9,10,12],"swaras":["S","R3","G3","M1","P","D2","N2","S'"]},{"id":35,"en":"35. Shulini","kn":"35. ಶೂಲಿನಿ","intervals":[0,3,4,5,7,9,11,12],"swaras":["S","R3","G3","M1","P","D2","N3","S'"]},{"id":36,"en":"36. Chalanata","kn":"36. ಚಲನಾಟ","intervals":[0,3,4,5,7,10,11,12],"swaras":["S","R3","G3","M1","P","D3","N3","S'"]},{"id":37,"en":"37. Salagam","kn":"37. ಸಾಲಗಂ","intervals":[0,1,2,6,7,8,9,12],"swaras":["S","R1","G1","M2","P","D1","N1","S'"]},{"id":38,"en":"38. Jalarnavam","kn":"38. ಜಲಾರ್ಣವಂ","intervals":[0,1,2,6,7,8,10,12],"swaras":["S","R1","G1","M2","P","D1","N2","S'"]},{"id":39,"en":"39. Jhalavarali","kn":"39. ಝಾಲವರಾಳಿ","intervals":[0,1,2,6,7,8,11,12],"swaras":["S","R1","G1","M2","P","D1","N3","S'"]},{"id":40,"en":"40. Navaneetam","kn":"40. ನವನೀತಂ","intervals":[0,1,2,6,7,9,10,12],"swaras":["S","R1","G1","M2","P","D2","N2","S'"]},{"id":41,"en":"41. Pavani","kn":"41. ಪಾವನಿ","intervals":[0,1,2,6,7,9,11,12],"swaras":["S","R1","G1","M2","P","D2","N3","S'"]},{"id":42,"en":"42. Raghupriya","kn":"42. ರಘುಪ್ರಿಯ","intervals":[0,1,2,6,7,10,11,12],"swaras":["S","R1","G1","M2","P","D3","N3","S'"]},{"id":43,"en":"43. Gavambhodi","kn":"43. ಗವಾಂಭೋಧಿ","intervals":[0,1,3,6,7,8,9,12],"swaras":["S","R1","G2","M2","P","D1","N1","S'"]},{"id":44,"en":"44. Bhavapriya","kn":"44. ಭವಪ್ರಿಯ","intervals":[0,1,3,6,7,8,10,12],"swaras":["S","R1","G2","M2","P","D1","N2","S'"]},{"id":45,"en":"45. Shubhapantuvarali","kn":"45. ಶುಭಪಂತುವರಾಳಿ","intervals":[0,1,3,6,7,8,11,12],"swaras":["S","R1","G2","M2","P","D1","N3","S'"]},{"id":46,"en":"46. Shadvidamargini","kn":"46. ಷಡ್ವಿಧಮಾರ್ಗಿಣಿ","intervals":[0,1,3,6,7,9,10,12],"swaras":["S","R1","G2","M2","P","D2","N2","S'"]},{"id":47,"en":"47. Suvarnangi","kn":"47. ಸುವರ್ಣಾಂಗಿ","intervals":[0,1,3,6,7,9,11,12],"swaras":["S","R1","G2","M2","P","D2","N3","S'"]},{"id":48,"en":"48. Divyamani","kn":"48. ದಿವ್ಯಮಣಿ","intervals":[0,1,3,6,7,10,11,12],"swaras":["S","R1","G2","M2","P","D3","N3","S'"]},{"id":49,"en":"49. Dhavalambari","kn":"49. ಧವಳಾಂಬರಿ","intervals":[0,1,4,6,7,8,9,12],"swaras":["S","R1","G3","M2","P","D1","N1","S'"]},{"id":50,"en":"50. Namanarayani","kn":"50. ನಾಮನಾರಾಯಣಿ","intervals":[0,1,4,6,7,8,10,12],"swaras":["S","R1","G3","M2","P","D1","N2","S'"]},{"id":51,"en":"51. Kamavardhani","kn":"51. ಕಾಮವರ್ಧನಿ","intervals":[0,1,4,6,7,8,11,12],"swaras":["S","R1","G3","M2","P","D1","N3","S'"]},{"id":52,"en":"52. Ramapriya","kn":"52. ರಾಮಪ್ರಿಯ","intervals":[0,1,4,6,7,9,10,12],"swaras":["S","R1","G3","M2","P","D2","N2","S'"]},{"id":53,"en":"53. Gamanashrama","kn":"53. ಗಮನಶ್ರಮ","intervals":[0,1,4,6,7,9,11,12],"swaras":["S","R1","G3","M2","P","D2","N3","S'"]},{"id":54,"en":"54. Vishwambari","kn":"54. ವಿಶ್ವಂಬರಿ","intervals":[0,1,4,6,7,10,11,12],"swaras":["S","R1","G3","M2","P","D3","N3","S'"]},{"id":55,"en":"55. Shyamalangi","kn":"55. ಶ್ಯಾಮಲಾಂಗಿ","intervals":[0,2,3,6,7,8,9,12],"swaras":["S","R2","G2","M2","P","D1","N1","S'"]},{"id":56,"en":"56. Shanmukhapriya","kn":"56. ಷಣ್ಮುಖಪ್ರಿಯ","intervals":[0,2,3,6,7,8,10,12],"swaras":["S","R2","G2","M2","P","D1","N2","S'"]},{"id":57,"en":"57. Simhendramadhyamam","kn":"57. ಸಿಂಹೇಂದ್ರಮಧ್ಯಮಂ","intervals":[0,2,3,6,7,8,11,12],"swaras":["S","R2","G2","M2","P","D1","N3","S'"]},{"id":58,"en":"58. Hemavati","kn":"58. ಹೇಮಾವತಿ","intervals":[0,2,3,6,7,9,10,12],"swaras":["S","R2","G2","M2","P","D2","N2","S'"]},{"id":59,"en":"59. Dharmavati","kn":"59. ಧರ್ಮವತಿ","intervals":[0,2,3,6,7,9,11,12],"swaras":["S","R2","G2","M2","P","D2","N3","S'"]},{"id":60,"en":"60. Neetimati","kn":"60. ನೀತಿಮತಿ","intervals":[0,2,3,6,7,10,11,12],"swaras":["S","R2","G2","M2","P","D3","N3","S'"]},{"id":61,"en":"61. Kantamani","kn":"61. ಕಾಂತಾಮಣಿ","intervals":[0,2,4,6,7,8,9,12],"swaras":["S","R2","G3","M2","P","D1","N1","S'"]},{"id":62,"en":"62. Rishabhapriya","kn":"62. ರಿಷಭಪ್ರಿಯ","intervals":[0,2,4,6,7,8,10,12],"swaras":["S","R2","G3","M2","P","D1","N2","S'"]},{"id":63,"en":"63. Latangi","kn":"63. ಲತಾಂಗಿ","intervals":[0,2,4,6,7,8,11,12],"swaras":["S","R2","G3","M2","P","D1","N3","S'"]},{"id":64,"en":"64. Vachaspati","kn":"64. ವಾಚಸ್ಪತಿ","intervals":[0,2,4,6,7,9,10,12],"swaras":["S","R2","G3","M2","P","D2","N2","S'"]},{"id":65,"en":"65. Mechakalyani","kn":"65. ಮೇಚಕಲ್ಯಾಣಿ","intervals":[0,2,4,6,7,9,11,12],"swaras":["S","R2","G3","M2","P","D2","N3","S'"]},{"id":66,"en":"66. Chitrambari","kn":"66. ಚಿತ್ರಾಂಬರಿ","intervals":[0,2,4,6,7,10,11,12],"swaras":["S","R2","G3","M2","P","D3","N3","S'"]},{"id":67,"en":"67. Sucharitra","kn":"67. ಸುಚರಿತ್ರ","intervals":[0,3,4,6,7,8,9,12],"swaras":["S","R3","G3","M2","P","D1","N1","S'"]},{"id":68,"en":"68. Jyotiswarupini","kn":"68. ಜ್ಯೋತಿಷರೂಪಿಣಿ","intervals":[0,3,4,6,7,8,10,12],"swaras":["S","R3","G3","M2","P","D1","N2","S'"]},{"id":69,"en":"69. Dhatuvardhani","kn":"69. ಧಾತುವರ್ಧನಿ","intervals":[0,3,4,6,7,8,11,12],"swaras":["S","R3","G3","M2","P","D1","N3","S'"]},{"id":70,"en":"70. Nasikabhushani","kn":"70. ನಾಸಿಕಾಭೂಷಣಿ","intervals":[0,3,4,6,7,9,10,12],"swaras":["S","R3","G3","M2","P","D2","N2","S'"]},{"id":71,"en":"71. Kosalam","kn":"71. ಕೋಸಲಂ","intervals":[0,3,4,6,7,9,11,12],"swaras":["S","R3","G3","M2","P","D2","N3","S'"]},{"id":72,"en":"72. Rasikapriya","kn":"72. ರಸಿಕಪ್ರಿಯ","intervals":[0,3,4,6,7,10,11,12],"swaras":["S","R3","G3","M2","P","D3","N3","S'"]}];
+
+const JANYA_RAGAS = [
+  {"en":"Shree","kn":"ಶ್ರೀ","intervalsAro":[0,2,5,7,10,12],"swarasAro":["S","R2","M1","P","N2","S'"],"intervalsAva":[12,10,7,9,10,7,5,2,3,2,0],"swarasAva":["S'","N2","P","D2","N2","P","M1","R2","G2","R2","S"]},
+  {"en":"Hamsadhvani","kn":"ಹಂಸಧ್ವನಿ","intervalsAro":[0,2,4,7,11,12],"swarasAro":["S","R2","G3","P","N3","S'"],"intervalsAva":[12,11,7,4,2,0],"swarasAva":["S'","N3","P","G3","R2","S"]},
+  {"en":"Mohanam","kn":"ಮೋಹನಂ","intervalsAro":[0,2,4,7,9,12],"swarasAro":["S","R2","G3","P","D2","S'"],"intervalsAva":[12,9,7,4,2,0],"swarasAva":["S'","D2","P","G3","R2","S"]},
+  {"en":"Hindolam","kn":"ಹಿಂದೋಳಂ","intervalsAro":[0,3,5,8,10,12],"swarasAro":["S","G2","M1","D1","N2","S'"],"intervalsAva":[12,10,8,5,3,0],"swarasAva":["S'","N2","D1","M1","G2","S"]},
+  {"en":"Abhogi","kn":"ಆಭೋಗಿ","intervalsAro":[0,2,3,5,9,12],"swarasAro":["S","R2","G2","M1","D2","S'"],"intervalsAva":[12,9,5,3,2,0],"swarasAva":["S'","D2","M1","G2","R2","S"]},
+  {"en":"Sriranjani","kn":"ಶ್ರೀರಂಜನಿ","intervalsAro":[0,2,3,5,9,10,12],"swarasAro":["S","R2","G2","M1","D2","N2","S'"],"intervalsAva":[12,10,9,5,3,2,0],"swarasAva":["S'","N2","D2","M1","G2","R2","S"]},
+  {"en":"Madhyamavati","kn":"ಮಧ್ಯಮಾವತಿ","intervalsAro":[0,2,5,7,10,12],"swarasAro":["S","R2","M1","P","N2","S'"],"intervalsAva":[12,10,7,5,2,0],"swarasAva":["S'","N2","P","M1","R2","S"]},
+  {"en":"Saveri","kn":"ಸಾವೇರಿ","intervalsAro":[0,1,5,7,8,12],"swarasAro":["S","R1","M1","P","D1","S'"],"intervalsAva":[12,11,8,7,5,4,1,0],"swarasAva":["S'","N3","D1","P","M1","G3","R1","S"]},
+  {"en":"Bilahari","kn":"ಬಿಲಹರಿ","intervalsAro":[0,2,4,7,9,12],"swarasAro":["S","R2","G3","P","D2","S'"],"intervalsAva":[12,10,9,7,5,4,2,0],"swarasAva":["S'","N2","D2","P","M1","G3","R2","S"]},
+  {"en":"Kambhoji","kn":"ಕಾಂಭೋಜಿ","intervalsAro":[0,2,4,5,7,9,12],"swarasAro":["S","R2","G3","M1","P","D2","S'"],"intervalsAva":[12,10,9,7,5,4,2,0],"swarasAva":["S'","N2","D2","P","M1","G3","R2","S"]},
+  {"en":"Arabhi","kn":"ಆರಭಿ","intervalsAro":[0,2,5,7,9,12],"swarasAro":["S","R2","M1","P","D2","S'"],"intervalsAva":[12,11,9,7,5,4,2,0],"swarasAva":["S'","N3","D2","P","M1","G3","R2","S"]},
+  {"en":"Kedaragowla","kn":"ಕೇದಾರಗೌಳ","intervalsAro":[0,2,5,7,10,12],"swarasAro":["S","R2","M1","P","N2","S'"],"intervalsAva":[12,10,9,7,5,4,2,0],"swarasAva":["S'","N2","D2","P","M1","G3","R2","S"]},
+  {"en":"Asaveri","kn":"ಅಸಾವೇರಿ","intervalsAro":[0,2,5,7,8,12],"swarasAro":["S","R2","M1","P","D1","S'"],"intervalsAva":[12,10,8,7,5,3,1,0],"swarasAva":["S'","N2","D1","P","M1","G2","R1","S"]},
+  {"en":"Suddha Saveri","kn":"ಶುದ್ಧ ಸಾವೇರಿ","intervalsAro":[0,2,5,7,9,12],"swarasAro":["S","R2","M1","P","D2","S'"],"intervalsAva":[12,9,7,5,2,0],"swarasAva":["S'","D2","P","M1","R2","S"]},
+  {"en":"Dhanyasi","kn":"ಧನ್ಯಾಸಿ","intervalsAro":[0,3,5,7,10,12],"swarasAro":["S","G2","M1","P","N2","S'"],"intervalsAva":[12,10,8,7,5,3,1,0],"swarasAva":["S'","N2","D1","P","M1","G2","R1","S"]},
+  {"en":"Bowli","kn":"ಬೌಳಿ","intervalsAro":[0,1,4,7,8,12],"swarasAro":["S","R1","G3","P","D1","S'"],"intervalsAva":[12,11,8,7,4,1,0],"swarasAva":["S'","N3","D1","P","G3","R1","S"]},
+  {"en":"Malahari","kn":"ಮಲಹರಿ","intervalsAro":[0,1,5,7,8,12],"swarasAro":["S","R1","M1","P","D1","S'"],"intervalsAva":[12,8,7,5,4,1,0],"swarasAva":["S'","D1","P","M1","G3","R1","S"]},
+  {"en":"Amritavarshini","kn":"ಅಮೃತವರ್ಷಿಣಿ","intervalsAro":[0,4,6,7,11,12],"swarasAro":["S","G3","M2","P","N3","S'"],"intervalsAva":[12,11,7,6,4,0],"swarasAva":["S'","N3","P","M2","G3","S"]},
+  {"en":"Revati","kn":"ರೇವತಿ","intervalsAro":[0,1,5,7,10,12],"swarasAro":["S","R1","M1","P","N2","S'"],"intervalsAva":[12,10,7,5,1,0],"swarasAva":["S'","N2","P","M1","R1","S"]},
+  {"en":"Kalyani","kn":"ಕಲ್ಯಾಣಿ","intervalsAro":[0,2,4,6,7,9,11,12],"swarasAro":["S","R2","G3","M2","P","D2","N3","S'"],"intervalsAva":[12,11,9,7,6,4,2,0],"swarasAva":["S'","N3","D2","P","M2","G3","R2","S"]},
+  {"en":"Bhairavi","kn":"ಭೈರವಿ","intervalsAro":[0,2,3,5,7,9,10,12],"swarasAro":["S","R2","G2","M1","P","D2","N2","S'"],"intervalsAva":[12,10,8,7,5,3,2,0],"swarasAva":["S'","N2","D1","P","M1","G2","R2","S"]},
+  {"en":"Shankarabharanam","kn":"ಶಂಕರಾಭರಣಂ","intervalsAro":[0,2,4,5,7,9,11,12],"swarasAro":["S","R2","G3","M1","P","D2","N3","S'"],"intervalsAva":[12,11,9,7,5,4,2,0],"swarasAva":["S'","N3","D2","P","M1","G3","R2","S"]},
+  {"en":"Todi","kn":"ತೋಡಿ","intervalsAro":[0,1,3,6,7,8,11,12],"swarasAro":["S","R1","G2","M2","P","D1","N3","S'"],"intervalsAva":[12,11,8,7,6,3,1,0],"swarasAva":["S'","N3","D1","P","M2","G2","R1","S"]},
+  {"en":"Poorvikalyani","kn":"ಪೂರ್ವಿಕಲ್ಯಾಣಿ","intervalsAro":[0,1,4,6,7,9,11,12],"swarasAro":["S","R1","G3","M2","P","D2","N3","S'"],"intervalsAva":[12,11,9,7,6,4,1,0],"swarasAva":["S'","N3","D2","P","M2","G3","R1","S"]},
+  {"en":"Nattai","kn":"ನಟ್ಟೈ","intervalsAro":[0,3,4,5,7,11,12],"swarasAro":["S","R3","G3","M1","P","N3","S'"],"intervalsAva":[12,11,7,5,4,3,0],"swarasAva":["S'","N3","P","M1","G3","R3","S"]},
+  {"en":"Gowla","kn":"ಗೌಳ","intervalsAro":[0,1,4,5,7,8,12],"swarasAro":["S","R1","G3","M1","P","D1","S'"],"intervalsAva":[12,11,8,7,5,4,1,0],"swarasAva":["S'","N3","D1","P","M1","G3","R1","S"]},
+  {"en":"Varali","kn":"ವರಾಳಿ","intervalsAro":[0,1,3,6,7,8,11,12],"swarasAro":["S","R1","G2","M2","P","D1","N3","S'"],"intervalsAva":[12,11,8,7,6,3,1,0],"swarasAva":["S'","N3","D1","P","M2","G2","R1","S"]},
+  {"en":"Nalinakanti","kn":"ನಳಿನಕಾಂತಿ","intervalsAro":[0,2,4,7,9,11,12],"swarasAro":["S","R2","G3","P","D2","N3","S'"],"intervalsAva":[12,11,9,7,4,2,0],"swarasAva":["S'","N3","D2","P","G3","R2","S"]},
+  {"en":"Darbar","kn":"ದರ್ಬಾರ್","intervalsAro":[0,2,5,7,9,10,11,12],"swarasAro":["S","R2","M1","P","D2","N2","N3","S'"],"intervalsAva":[12,11,10,9,7,5,2,0],"swarasAva":["S'","N3","N2","D2","P","M1","R2","S"]},
+  {"en":"Vasanta","kn":"ವಸಂತ","intervalsAro":[0,1,4,6,7,11,12],"swarasAro":["S","R1","G3","M2","P","N3","S'"],"intervalsAva":[12,11,7,6,4,1,0],"swarasAva":["S'","N3","P","M2","G3","R1","S"]},
+  {"en":"Anandabhairavi","kn":"ಆನಂದಭೈರವಿ","intervalsAro":[0,2,3,5,7,9,12],"swarasAro":["S","R2","G2","M1","P","D2","S'"],"intervalsAva":[12,10,9,7,5,3,2,0],"swarasAva":["S'","D2","P","M1","G2","R2","S"]},
+  {"en":"Sindhu Bhairavi","kn":"ಸಿಂಧು ಭೈರವಿ","intervalsAro":[0,2,3,5,7,8,9,10,12],"swarasAro":["S","R2","G2","M1","P","D1","D2","N2","S'"],"intervalsAva":[12,10,9,8,7,5,3,2,0],"swarasAva":["S'","N2","D2","D1","P","M1","G2","R2","S"]},
+  {"en":"Shuddha Dhanyasi","kn":"ಶುದ್ಧ ಧನ್ಯಾಸಿ","intervalsAro":[0,3,5,8,10,12],"swarasAro":["S","G2","M1","D1","N2","S'"],"intervalsAva":[12,10,8,5,3,0],"swarasAva":["S'","N2","D1","M1","G2","S"]}
+];
+
+// ─── EXPANDED KRITHI DATABASE ─────────────────────────────────────────────────
+const KRITHIS = [
+  {"r":"Shree","en":"Endaro Mahanubhavulu","kn":"ಎಂದರೋ ಮಹಾನುಭಾವುಲು"},
+  {"r":"Shree","en":"Sri Muladhara","kn":"ಶ್ರೀ ಮೂಲಾಧಾರ"},
+  // Hamsadhvani
+  { name: "Vatapi Ganapatim", composer: "Dikshitar", raga: "Hamsadhvani", seq: [0, 2, 4, 7, 11, 0] },
+  { name: "Banturiti Kolu", composer: "Tyagaraja", raga: "Hamsadhvani", seq: [7, 4, 2, 0, 11, 0] },
+  // Bhairavi
+  { name: "Viriboni", composer: "Pachimiriam", raga: "Bhairavi", seq: [0, 2, 3, 5, 7, 9, 10, 12] },
+  // Kalyani
+  { name: "Ninnukori Varnam", composer: "Patnam", raga: "Kalyani", seq: [0, 2, 4, 6, 7, 9, 11, 0] },
+  { name: "Etavunara", composer: "Tyagaraja", raga: "Kalyani", seq: [0, 2, 4, 6, 7, 11, 0] },
+  // Hindolam
+  { name: "Samajavaragamana", composer: "Tyagaraja", raga: "Hindolam", seq: [0, 5, 3, 5, 8, 10, 8, 5] },
+  { name: "Namo Namo Raghavaya", composer: "Dikshitar", raga: "Hindolam", seq: [0, 3, 5, 8, 10, 12] },
+  // Mohanam
+  { name: "Enta Muddo", composer: "Syama Sastri", raga: "Mohanam", seq: [0, 2, 4, 7, 9, 12] },
+  { name: "Sami Ninne Kori", composer: "Tyagaraja", raga: "Mohanam", seq: [7, 9, 7, 4, 2, 4, 7] },
+  // Abhogi
+  { name: "Nagumomu Ganaleni", composer: "Tyagaraja", raga: "Abhogi", seq: [0, 3, 5, 7, 10, 9, 7] },
+  // Madhyamavati
+  { name: "Endaro Mahanubhavulu", composer: "Tyagaraja", raga: "Madhyamavati", seq: [0, 2, 5, 7, 10, 0] },
+  { name: "Rara Venu Gopa", composer: "Tyagaraja", raga: "Madhyamavati", seq: [0, 2, 5, 7, 10, 12] },
+  // Shankarabharanam
+  { name: "Dorukugunana", composer: "Tyagaraja", raga: "Shankarabharanam", seq: [0, 2, 4, 5, 7, 9, 11, 0] },
+  { name: "Nagumomu (Bhajan)", composer: "Various", raga: "Shankarabharanam", seq: [5, 7, 9, 11, 0, 2, 4] },
+  // Sriranjani
+  { name: "Janani Janani", composer: "G N Balasubramaniam", raga: "Sriranjani", seq: [0, 2, 3, 5, 9, 10, 12] },
+  // Kambhoji
+  { name: "Marivere Gati", composer: "Tyagaraja", raga: "Kambhoji", seq: [0, 2, 4, 5, 7, 9, 12] },
+  { name: "Bala Gopala", composer: "Dikshitar", raga: "Kambhoji", seq: [7, 5, 4, 2, 5, 7, 9] },
+  // Arabhi
+  { name: "Namo Bhutanathaya", composer: "Dikshitar", raga: "Arabhi", seq: [0, 2, 5, 7, 9, 12] },
+  { name: "Kana Kana Ruchira", composer: "Tyagaraja", raga: "Arabhi", seq: [7, 9, 5, 7, 2, 5, 7] },
+  // Bilahari
+  { name: "Narasimha Prana Priye", composer: "Dikshitar", raga: "Bilahari", seq: [0, 2, 4, 7, 9, 12] },
+  { name: "Koluvaiyunnade", composer: "Tyagaraja", raga: "Bilahari", seq: [9, 7, 4, 7, 9, 12, 11] },
+  // Saveri
+  { name: "Ninnada Nammiti", composer: "Tyagaraja", raga: "Saveri", seq: [0, 1, 5, 7, 8, 12] },
+  // Amritavarshini
+  { name: "Ananda Natana Prakasam", composer: "Dikshitar", raga: "Amritavarshini", seq: [0, 4, 6, 7, 11, 0] },
+  // Bhairavi
+  { name: "Balagopala", composer: "Syama Sastri", raga: "Bhairavi", seq: [0, 3, 5, 7, 8, 10, 0] },
+  // Anandabhairavi
+  { name: "Raksha Bettare", composer: "Purandaradasa", raga: "Anandabhairavi", seq: [0, 2, 3, 5, 7, 9, 10] },
+  { name: "Kamakshi", composer: "Dikshitar", raga: "Anandabhairavi", seq: [9, 7, 5, 3, 2, 3, 5] },
+  // Nattai
+  { name: "Maha Ganapatim", composer: "Dikshitar", raga: "Nattai", seq: [0, 3, 4, 5, 7, 11, 0] },
+  { name: "Brochevarevaru", composer: "Tyagaraja", raga: "Nattai", seq: [0, 3, 4, 7, 11, 0] },
+  // Kedaragowla
+  { name: "Bhavayami Raghuramam", composer: "Dikshitar", raga: "Kedaragowla", seq: [0, 2, 5, 7, 10, 12] },
+  // Varali
+  { name: "Govinda Damodara", composer: "Dikshitar", raga: "Varali", seq: [0, 1, 3, 6, 7, 8, 11] },
+  // Todi
+  { name: "Nanda Kumara", composer: "Dikshitar", raga: "Todi", seq: [0, 1, 3, 6, 7, 8, 11, 0] },
+  // Mayamalavagowla
+  { name: "Mahadeva Shiva", composer: "Dikshitar", raga: "Mayamalavagowla", seq: [0, 1, 4, 5, 7, 8, 11] },
+  { name: "Gajavadana", composer: "Purandaradasa", raga: "Mayamalavagowla", seq: [5, 7, 8, 11, 0, 8, 7] },
+  // Bowli
+  { name: "Sarasa Sama Dana", composer: "Tyagaraja", raga: "Bowli", seq: [0, 1, 4, 7, 8, 12] },
+  // Revati
+  { name: "Bho Shambho", composer: "Dayananda Saraswati", raga: "Revati", seq: [0, 1, 5, 7, 10, 12] },
+  // Nalinakanti
+  { name: "Swaminatha Paripalaya", composer: "Muthuswami Dikshitar", raga: "Nalinakanti", seq: [0, 2, 4, 7, 9, 11, 0] },
+  // Darbar
+  { name: "Vathapi Darbar Variation", composer: "Various", raga: "Darbar", seq: [0, 2, 5, 7, 9, 10, 12] },
+  // Hanumatodi
+  { name: "Nidhi Chala Sukhama", composer: "Tyagaraja", raga: "Hanumatodi", seq: [0, 1, 3, 5, 7, 8, 10, 12] },
+  // Charukesi
+  { name: "Koluvaiyunna", composer: "Tyagaraja", raga: "Charukesi", seq: [0, 2, 4, 5, 7, 8, 10] },
+  // Kharaharapriya
+  { name: "Manasa Sancharare", composer: "Tyagaraja", raga: "Kharaharapriya", seq: [0, 2, 3, 5, 7, 9, 10, 0] },
+  // Dhanyasi
+  { name: "Palayachyutam", composer: "Muthuswami Dikshitar", raga: "Dhanyasi", seq: [0, 3, 5, 7, 10, 12] },
+  // Gowla
+  { name: "Manasu Svadhina", composer: "Tyagaraja", raga: "Gowla", seq: [0, 1, 4, 5, 7, 8, 0] }
+];
+
+const WESTERN_NOTES = ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
+const SWARA_NAMES = {0:'S',1:'R1',2:'R2',3:'G2',4:'G3',5:'M1',6:'M2',7:'P',8:'D1',9:'D2',10:'N2',11:'N3'};
+const SWARA_KN = {'S':'ಸ','R1':'ರಿ1','R2':'ರಿ2','R3':'ರಿ3','G1':'ಗ1','G2':'ಗ2','G3':'ಗ3','M1':'ಮ1','M2':'ಮ2','P':'ಪ','D1':'ದ1','D2':'ದ2','D3':'ದ3','N1':'ನಿ1','N2':'ನಿ2','N3':'ನಿ3'};
+
+const I18N = {
+  en: { 
+    title:"Pitch & Raga Identifier", trace:"Sung Swaras", clear:"Clear Trace", 
+    matches:"Possible Ragas", noNotes:"Sing into the microphone to identify ragas...", 
+    start:"🎤 Start Microphone", stop:"🛑 Stop Microphone",
+    krithiTitle: "Composition (Krithi) Matches",
+    krithiWait: "Sing a longer phrase to identify compositions..."
+  },
+  kn: { 
+    title:"ರಾಗ ಗುರುತಿಸುವಿಕೆ", trace:"ಹಾಡಿದ ಸ್ವರಗಳು", clear:"ಅಳಿಸಿ", 
+    matches:"ಸಾಧ್ಯವಿರುವ ರಾಗಗಳು", noNotes:"ರಾಗಗಳನ್ನು ಗುರುತಿಸಲು ಮೈಕ್ರೊಫೋನ್‌ಗೆ ಹಾಡಿ...", 
+    start:"🎤 ಮೈಕ್ರೊಫೋನ್ ಪ್ರಾರಂಭಿಸಿ", stop:"🛑 ಮೈಕ್ರೊಫೋನ್ ನಿಲ್ಲಿಸಿ",
+    krithiTitle: "ಕೃತಿಗಳ ಹೊಂದಾಣಿಕೆ",
+    krithiWait: "ಕೃತಿಗಳನ್ನು ಗುರುತಿಸಲು ಇನ್ನಷ್ಟು ಹಾಡಿ..."
+  }
+};
+
+// ─── UTILITY ──────────────────────────────────────────────────────────────────
+let lang = 'en';
+const el = id => document.getElementById(id);
+
+function isIOS() {
+  return /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+}
+function isIOSChrome() {
+  return isIOS() && /CriOS/.test(navigator.userAgent);
+}
+function isSafariIOS() {
+  return isIOS() && !isIOSChrome() && /Safari/.test(navigator.userAgent);
+}
+
+if (isIOS()) {
+  const notice = el('iosNotice');
+  if (notice) {
+    notice.style.display = 'block';
+    notice.textContent = isIOSChrome()
+      ? '📱 iOS Chrome: Allow microphone in Settings → Chrome → Microphone'
+      : '📱 iOS Safari: Allow microphone in Settings → Safari → Microphone';
+  }
+}
+
+const THEMES = [
+  {acc:'#00e5ff',accHover:'#00b0ff'},
+  {acc:'#ff4081',accHover:'#f50057'},
+  {acc:'#76ff03',accHover:'#1de9b6'},
+  {acc:'#ffeb3b',accHover:'#ffc107'}
+];
+let themeIdx = 0;
+el('themeToggle').onclick = () => {
+  themeIdx = (themeIdx + 1) % THEMES.length;
+  const t = THEMES[themeIdx];
+  document.documentElement.style.setProperty('--acc', t.acc);
+  document.documentElement.style.setProperty('--acc-hover', t.accHover);
+};
+
+const applyLang = () => {
+  const t = I18N[lang];
+  if(el('tTitle')) el('tTitle').textContent = t.title;
+  if(el('lblTrace')) el('lblTrace').innerHTML = t.trace + ' <span id="rootIndicator" style="color:var(--acc);margin-left:10px;font-weight:bold;"></span>';
+  if(el('btnClear')) el('btnClear').textContent = t.clear;
+  if(el('lblMatches')) el('lblMatches').textContent = t.matches;
+  if(el('lblKrithi')) el('lblKrithi').textContent = t.krithiTitle;
+  if(el('lblNoKrithi') && globalKrithis.size === 0) el('lblNoKrithi').textContent = t.krithiWait;
+  if(el('btnMic')) el('btnMic').textContent = isListening ? t.stop : t.start;
+
+  if(typeof sungPitchClasses !== 'undefined' && sungPitchClasses.size === 0 && el('lblNoNotes')) el('lblNoNotes').textContent = t.noNotes;
+  if(el('langToggle')) el('langToggle').textContent = lang === 'en' ? 'ಕನ್ನಡ' : 'English';
+  if(typeof updateTraceUI === 'function') updateTraceUI();
+  if(typeof findRagas === 'function') findRagas();
+};
+
+el('langToggle').onclick = () => { lang = lang === 'en' ? 'kn' : 'en'; applyLang(); };
+
+// ─── AUDIO ENGINE ─────────────────────────────────────────────────────────────
+let actx = null, analyser = null, mediaStream = null;
+let isListening = false, animFrame = null;
+let buf = new Float32Array(2048);
+let sungPitchClasses = new Set();
+let traceLog = [];
+let lastPitchClass = -1, stableCount = 0, currentRoot = -1;
+let pitchHistory = [], swaraHoldTimer = null;
+let bestRoot = -1;
+
+// YIN-inspired autocorrelation with improved accuracy
+function detectPitch(buffer, sampleRate) {
+  const SIZE = buffer.length;
+  let rms = 0;
+  for (let i = 0; i < SIZE; i++) rms += buffer[i] * buffer[i];
+  rms = Math.sqrt(rms / SIZE);
+  if (rms < 0.0045) return -1;
+
+  // Trimming
+  let r1 = 0, r2 = SIZE - 1;
+  for (let i = 0; i < SIZE / 2; i++) if (Math.abs(buffer[i]) < 0.2) { r1 = i; break; }
+  for (let i = 1; i < SIZE / 2; i++) if (Math.abs(buffer[SIZE - i]) < 0.2) { r2 = SIZE - i; break; }
+  const trimmed = buffer.slice(r1, r2);
+  const tSIZE = trimmed.length;
+
+  // Autocorrelation
+  const c = new Float32Array(tSIZE);
+  for (let i = 0; i < tSIZE; i++)
+    for (let j = 0; j < tSIZE - i; j++)
+      c[i] += trimmed[j] * trimmed[j + i];
+
+  let d = 0;
+  while (d < tSIZE - 1 && c[d] > c[d + 1]) d++;
+  let maxval = -1, maxpos = -1;
+  for (let i = d; i < tSIZE; i++) {
+    if (c[i] > maxval) { maxval = c[i]; maxpos = i; }
+  }
+  if (maxpos < 1 || maxpos >= tSIZE - 1) return -1;
+
+  // Parabolic interpolation
+  const x1 = c[maxpos - 1], x2 = c[maxpos], x3 = c[maxpos + 1];
+  const a = (x1 + x3 - 2 * x2) / 2;
+  const b = (x3 - x1) / 2;
+  let T0 = a ? maxpos - b / (2 * a) : maxpos;
+
+  return sampleRate / T0;
+}
+
+function updatePitch() {
+  if (!isListening) return;
+
+  try {
+    if (actx && actx.state === 'suspended') {
+      actx.resume();
+    }
+
+    analyser.getFloatTimeDomainData(buf);
+
+  // Waveform viz
+  const canvas = el('vizCanvas');
+  if (canvas) {
+    const ctx = canvas.getContext('2d');
+    if (canvas.width !== canvas.offsetWidth) canvas.width = canvas.offsetWidth;
+    if (canvas.height !== canvas.offsetHeight) canvas.height = canvas.offsetHeight;
+    const byteBuf = new Uint8Array(analyser.frequencyBinCount);
+    analyser.getByteTimeDomainData(byteBuf);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = document.documentElement.style.getPropertyValue('--acc') || '#00e5ff';
+    ctx.beginPath();
+    const sliceW = canvas.width / byteBuf.length;
+    let x = 0;
+    for (let i = 0; i < byteBuf.length; i++) {
+      const y = (byteBuf[i] / 128.0) * canvas.height / 2;
+      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      x += sliceW;
+    }
+    ctx.lineTo(canvas.width, canvas.height / 2);
+    ctx.stroke();
+  }
+
+  let rms = 0;
+  for (let i = 0; i < buf.length; i++) rms += buf[i] * buf[i];
+  rms = Math.sqrt(rms / buf.length);
+
+  let rawPitch = rms > 0.0045 ? detectPitch(buf, actx.sampleRate) : -1;
+  let pitch = -1;
+  if (rawPitch !== -1 && rawPitch >= 50 && rawPitch <= 2000) {
+    pitchHistory.push(rawPitch);
+    if (pitchHistory.length > 7) pitchHistory.shift();
+    const sorted = [...pitchHistory].sort((a, b) => a - b);
+    pitch = sorted[Math.floor(sorted.length / 2)];
+  } else {
+    pitchHistory = [];
+  }
+
+  if (pitch !== -1 && pitch >= 50 && pitch <= 2000) {
+    const midiNote = Math.round(69 + 12 * Math.log2(pitch / 440));
+    const pitchClass = midiNote % 12;
+
+    if (currentRoot === -1) currentRoot = pitchClass;
+
+    const interval = (pitchClass - currentRoot + 12) % 12;
+    el('hzDisp').textContent = pitch.toFixed(1) + ' Hz';
+
+    const sNameEn = SWARA_NAMES[interval];
+    el('swaraDisp').textContent = lang === 'en' ? sNameEn : (SWARA_KN[sNameEn] || sNameEn);
+    el('noteDisp').textContent = WESTERN_NOTES[pitchClass];
+
+    const exactMidiFreq = 440 * Math.pow(2, (midiNote - 69) / 12);
+    const cents = 1200 * Math.log2(pitch / exactMidiFreq);
+    el('noteDisp').style.color = Math.abs(cents) < 15 ? '#76ff03' : '';
+
+    clearTimeout(swaraHoldTimer);
+    swaraHoldTimer = setTimeout(() => {
+      if (!isListening) return;
+      el('swaraDisp').textContent = '-';
+      el('noteDisp').textContent = '--';
+      el('noteDisp').style.color = '';
+    }, 2000);
+
+    if (pitchClass === lastPitchClass) {
+      stableCount++;
+      if (stableCount === 4) {
+        if (!sungPitchClasses.has(pitchClass) || traceLog[traceLog.length - 1] !== pitchClass) {
+          sungPitchClasses.add(pitchClass);
+          traceLog.push(pitchClass);
+          if (traceLog.length > 24) traceLog.shift();
+          updateTraceUI();
+          findRagas();
+        }
+      }
+    } else {
+      lastPitchClass = pitchClass;
+      stableCount = 0;
+    }
+  } else {
+    el('hzDisp').textContent = '0.0 Hz';
+    stableCount = 0;
+  }
+
+  } catch (e) {
+    console.error('updatePitch loop error', e);
+  } finally {
+    if (isListening) animFrame = requestAnimationFrame(updatePitch);
+  }
+}
+
+// ─── iOS-SAFE MIC BUTTON ──────────────────────────────────────────────────────
+// ── TRIAL LOGIC (resets every app open, no localStorage) ──
+const TRIAL_DURATION_MS = 1 * 60 * 1000; // 1 minute
+// Restore saved trial so app-reload doesn't reset the countdown
+let trialUsedMs = (function(){
+  try{
+    if(localStorage.getItem('raga_promax_v1')==='active') return 0;
+    return parseInt(localStorage.getItem('ragaTrialUsedMs')||'0',10);
+  }catch(e){return 0;}
+})();
+let trialBaseUsedMs = trialUsedMs;
+let trialStartTime = null;
+let trialTickInterval = null;
+let trialEnded = (localStorage.getItem('raga_promax_v1')!=='active') && (trialUsedMs >= TRIAL_DURATION_MS);
+
+const formatTime = ms => {
+  const m = Math.floor(ms / 60000);
+  const s = Math.floor((ms % 60000) / 1000);
+  return `${m}:${s.toString().padStart(2, '0')}`;
+};
+
+function updateTrialBar() {
+
+
+  // Never update trial bar for premium users
+  if (localStorage.getItem('raga_promax_v1') === 'active') {
+    hideTrialBar();
+    return;
+  }
+  const remaining = Math.max(0, TRIAL_DURATION_MS - trialUsedMs);
+  const pct = (remaining / TRIAL_DURATION_MS) * 100;
+  const fill = document.getElementById('trialFill');
+  const count = document.getElementById('trialCount');
+  const bar = document.getElementById('trialBar');
+  if (fill) fill.style.width = pct + '%';
+  if (count) count.textContent = formatTime(remaining) + ' remaining';
+  if (remaining === 0 && !trialEnded) {
+    if (typeof isProMaxUser === 'function' && isProMaxUser()) return;
+    trialEnded = true;
+    if (bar) bar.style.borderColor = '#d32f2f';
+    if (fill) fill.style.background = '#d32f2f';
+    if (count) { count.textContent = 'Trial ended'; count.style.color = '#d32f2f'; }
+    stopTrialTimer();
+    // Stop mic if running
+    if (isListening) el('btnMic').click();
+    el('btnMic').disabled = true;
+    el('btnMic').style.opacity = '0.35';
+    document.getElementById('promaxOverlay').classList.add('show');
+  }
+}
+
+function startTrialTimer() {
+  if (typeof isProMaxUser === 'function' && isProMaxUser()) return;
+  if (trialEnded || trialStartTime !== null) return;
+  trialBaseUsedMs = trialUsedMs; // snapshot accumulated before this session
+  trialStartTime = Date.now();
+  trialTickInterval = setInterval(() => {
+    trialUsedMs = trialBaseUsedMs + (Date.now() - trialStartTime);
+    try{ localStorage.setItem('ragaTrialUsedMs', String(trialUsedMs)); }catch(e){}
+    updateTrialBar();
+  }, 500);
+}
+
+function stopTrialTimer() {
+  if (trialStartTime !== null) {
+    trialUsedMs = trialBaseUsedMs + (Date.now() - trialStartTime);
+    trialStartTime = null;
+  }
+  clearInterval(trialTickInterval);
+  trialTickInterval = null;
+  if (localStorage.getItem('raga_promax_v1')!=='active') {
+    try{ localStorage.setItem('ragaTrialUsedMs', String(trialUsedMs)); }catch(e){}
+  }
+  updateTrialBar();
+}
+
+// ProMax modal
+document.getElementById('btnProMax').onclick = () =>
+  document.getElementById('promaxOverlay').classList.add('show');
+document.getElementById('promaxClose').onclick = () =>
+  document.getElementById('promaxOverlay').classList.remove('show');
+// ── GOOGLE PLAY BILLING via getRagaBridge() (JavascriptInterface) ────────────
+  // No Capacitor plugins. No CdvPurchase. Just getRagaBridge() injected by
+  // BillingBridge.java via WebView.addJavascriptInterface().
+
+  const PROMAX_KEY      = 'raga_promax_v1';
+  const RAGA_PRODUCT_ID = 'raga_pro_yearly';
+
+  function isProMaxUser() {
+    try { return localStorage.getItem(PROMAX_KEY) === 'active'; } catch(e) { return false; }
+  }
+
+  // ── Show animated thank-you / welcome-back toast ──────────────────
+  function showProToast(msg, duration) {
+    const t = document.getElementById('proToast');
+    if (!t) return;
+    t.textContent = msg || '✅ Thank you for subscribing! Full features are unlocked!';
+    t.classList.remove('hide');
+    t.classList.add('show');
+    clearTimeout(t._hideTimer);
+    t._hideTimer = setTimeout(() => {
+      t.classList.add('hide');
+      setTimeout(() => { t.classList.remove('show','hide'); }, 400);
+    }, duration || 4000);
+  }
+
+  // Directly hide the trial bar — no isProMaxUser() guard so it always works
+  function hideTrialBar() {
+    const tb = document.getElementById('trialBar');
+    if (tb) { tb.style.display = 'none'; tb.classList.add('pro-unlocked'); }
+  }
+
+  function applyProMaxStatus(showToast, toastMsg) {
+    // Only hides bar + resets trial — does NOT set localStorage (that's _activatePro's job)
+    if (!isProMaxUser()) return;
+    hideTrialBar();
+    // Reset all trial state
+    trialEnded      = false;
+    trialUsedMs     = 0;
+    trialBaseUsedMs = 0;
+    trialStartTime  = null;
+    try{ localStorage.removeItem('ragaTrialUsedMs'); }catch(e){}
+    if (trialTickInterval) { clearInterval(trialTickInterval); trialTickInterval = null; }
+    // Close promax overlay
+    const ov = document.getElementById('promaxOverlay');
+    if (ov) { ov.classList.remove('show'); ov.style.display='none'; }
+    // Re-enable mic button fully
+    const mb = document.getElementById('btnMic');
+    if (mb) { mb.disabled = false; mb.style.opacity = ''; mb.style.cursor = ''; }
+    // Show toast if requested
+    if (showToast) showProToast(toastMsg);
+  }
+
+  function _activatePro() {
+    // Set subscription as active in localStorage
+    try { localStorage.setItem('raga_promax_v1', 'active'); } catch(e) {}
+    // Close modal immediately
+    const ov = document.getElementById('promaxOverlay');
+    if (ov) ov.classList.remove('show');
+    // Hide bar + reset trial + show toast
+    hideTrialBar();
+    trialEnded = false; trialUsedMs = 0; trialBaseUsedMs = 0; trialStartTime = null;
+    try{ localStorage.removeItem('ragaTrialUsedMs'); }catch(e){}
+    if (trialTickInterval){ clearInterval(trialTickInterval); trialTickInterval = null; }
+    const mb = document.getElementById('btnMic');
+    if (mb) { mb.disabled = false; mb.style.opacity = ''; mb.style.cursor = ''; }
+    showProToast('✅ Thank you for subscribing! Full features are unlocked!');
+  }
+
+  function getRagaBridge() {
+    return window.Android || null;
+  }
+
+  // ── Callback from native → JS ──────────────────────────────────────────
+  // BillingBridge.java calls: window._billingCallback(event, jsonObject)
+
+  window._billingCallback = function(event, data) {
+    if (typeof data === 'string') { try { data = JSON.parse(data); } catch(e) { data = {}; } }
+    data = data || {};
+    console.log('[billing] callback:', event, JSON.stringify(data));
+    switch(event) {
+      case 'productLoaded':
+        console.log('[billing] product loaded ✅:', data.title, data.price);
+        break;
+      case 'productError':
+        console.error('[billing] productError:', data.message);
+        break;
+      case 'purchaseSuccess':
+        console.log('[billing] purchase success ✅');
+        _activatePro();
+        break;
+      case 'purchaseCancelled':
+        console.log('[billing] cancelled by user');
+        break;
+      case 'purchaseError':
+        console.error('[billing] purchaseError:', data.message);
+        alert('Purchase failed: ' + (data.message || 'Please try again.'));
+        break;
+      case 'restoreResult':
+        console.log('[billing] restore result — active:', data.active);
+        if (data.active === true || data.active === 'true') {
+          try { localStorage.setItem('raga_promax_v1', 'active'); } catch(e) {}
+          const ov = document.getElementById('promaxOverlay');
+          if (ov) ov.classList.remove('show');
+          hideTrialBar();
+          trialEnded = false; trialUsedMs = 0; trialBaseUsedMs = 0; trialStartTime = null;
+          try{ localStorage.removeItem('ragaTrialUsedMs'); }catch(e){}
+          if (trialTickInterval){ clearInterval(trialTickInterval); trialTickInterval = null; }
+          const mb = document.getElementById('btnMic');
+          if (mb) { mb.disabled = false; mb.style.opacity = ''; mb.style.cursor = ''; }
+          showProToast('👑 Welcome back! Your Pitch Pro subscription is active.');
+        }
+        break;
+    }
+  };
+  window.billingCallback = window._billingCallback; // native Java calls window.billingCallback
+// Backward‑compatible alias so native can call either one:
+  // ── Synchronous status poll ────────────────────────────────────────────
+
+  function getBillingStatus() {
+    if (!getRagaBridge()) return null;
+    try { const bridge = getRagaBridge(); return bridge ? JSON.parse(bridge.getStatus()) : null; }
+    catch (e) { return null; }
+  }
+
+  // Wait up to timeoutMs for productLoaded=true, polling every 1s
+  async function waitForProduct(timeoutMs) {
+    const end = Date.now() + timeoutMs;
+    while (Date.now() < end) {
+      const s = getBillingStatus();
+      if (s) {
+        console.log('[billing] poll:', JSON.stringify(s));
+        if (s.productLoaded) return { ok: true };
+        // If billing is ready but Play returned an error, no point waiting
+        if (s.billingReady && s.lastError) {
+          return { ok: false, error: s.lastError, code: s.lastErrorCode };
+        }
+      }
+      await new Promise(r => setTimeout(r, 1000));
+    }
+    const final_s = getBillingStatus();
+    return {
+      ok:    false,
+      error: 'Timed out — Play did not return product',
+      extra: final_s ? JSON.stringify(final_s) : 'Android bridge not available'
+    };
+  }
+
+  // ── Restore on launch ──────────────────────────────────────────────────
+
+  async function initBilling() {
+    if (!getRagaBridge()) {
+      console.warn('[billing] getRagaBridge() not available yet — BillingBridge not injected');
+      return;
+    }
+    console.log('[billing] getRagaBridge() found ✅');
+    // Wait for billing to connect then restore purchases
+    const s = await waitForProduct(8000);
+    console.log('[billing] init wait result:', JSON.stringify(s));
+    try { const bridge = getRagaBridge(); if (bridge) bridge.restorePurchases(); } catch(e) { console.warn('[billing] restore error:', e); }
+  }
+
+  // ── Subscribe button ───────────────────────────────────────────────────
+
+  async function launchGooglePlayBillingRaga() {
+    if (!getRagaBridge()) {
+      alert('Billing not available.\n\nEnsure BillingBridge.java is registered in MainActivity.java as Android, then rebuild.');
+      return;
+    }
+
+    const btn      = document.getElementById('btnSubscribe');
+    const origText = btn?.textContent ?? 'Subscribe';
+    if (btn) { btn.textContent = '⏳ Connecting…'; btn.disabled = true; }
+
+    // Quick check first
+    let status = getBillingStatus();
+    console.log('[billing] status on tap:', JSON.stringify(status));
+
+    // If product not loaded, wait up to 20s
+    if (!status || !status.productLoaded) {
+      const result = await waitForProduct(20000);
+      status = getBillingStatus();
+      console.log('[billing] after wait:', JSON.stringify(result), JSON.stringify(status));
+
+      if (!result.ok) {
+        if (btn) { btn.textContent = origText; btn.disabled = false; }
+        alert(
+          'Google Play did not return the subscription.\n\n' +
+          'Error: '    + (result.error || 'unknown') + '\n' +
+          'Code: '     + (result.code  || 0)         + '\n' +
+          'Billing connected: ' + (status ? status.billingReady : 'unknown') + '\n\n' +
+          'To fix:\n' +
+          '1. Install the app FROM Play Store via the internal test opt-in link\n' +
+          '2. Add your Gmail to Play Console → Setup → License Testing\n' +
+          '3. Confirm subscription "' + RAGA_PRODUCT_ID + '" is Active\n' +
+          '4. Confirm the Base Plan inside the subscription is also Active\n' +
+          '5. Check logcat tag "BillingBridge" for the exact error'
+        );
+        return;
+      }
+    }
+
+    if (btn) { btn.textContent = '⏳ Opening…'; btn.disabled = true; }
+    try {
+      const bridge = getRagaBridge();
+      bridge.purchase(); // no args — Java signature is purchase()
+      // Result comes back via window._billingCallback
+      // Failsafe: also poll getStatus().active every 2s for 60s in case callback is missed
+      let purchasePollCount = 0;
+      const purchasePollTimer = setInterval(() => {
+        purchasePollCount++;
+        if (isProMaxUser()) { clearInterval(purchasePollTimer); return; }
+        try {
+          const bridge2 = getRagaBridge(); const ps = bridge2 ? JSON.parse(bridge2.getStatus()) : null;
+          if (ps && ps.active === true) {
+            console.log('[billing] post-purchase poll: active detected');
+            clearInterval(purchasePollTimer);
+            _activatePro();
+          }
+        } catch(e) {}
+        if (purchasePollCount >= 30) clearInterval(purchasePollTimer); // stop after 60s
+      }, 2000);
+    } catch(e) {
+      console.error('[billing] purchase() threw:', e);
+      alert('Could not start purchase: ' + e.message);
+    } finally {
+      if (btn) { btn.textContent = origText; btn.disabled = false; }
+    }
+  }
+
+  // Kick off — getRagaBridge() is available immediately once the WebView injects it
+  document.addEventListener('DOMContentLoaded', () => {
+    // Silently restore premium state for returning subscribers on every launch
+    if (isProMaxUser()) { hideTrialBar(); applyProMaxStatus(false); }
+    // Also check native bridge immediately after it settles
+    setTimeout(() => {
+      if (isProMaxUser()) return; // already unlocked
+      if (!getRagaBridge()) return;
+      try {
+        const bridge3 = getRagaBridge(); const s = bridge3 ? JSON.parse(bridge3.getStatus()) : null;
+        if (s && s.active === true) {
+          console.log('[billing] startup getStatus check: active — activating!');
+          _activatePro();
+        }
+      } catch(e) {}
+    }, 1500);
+    setTimeout(initBilling, 500); // small delay to let bridge settle
+  });
+
+
+  // ── Failsafe: Poll native status every 2 seconds ──────────────────────────
+  // If purchaseSuccess callback is missed, this catches it via getStatus().active
+  setInterval(() => {
+    if (isProMaxUser()) return; // already unlocked, stop checking
+    if (!getRagaBridge()) return;
+    try {
+      const bridge3 = getRagaBridge(); const s = bridge3 ? JSON.parse(bridge3.getStatus()) : null;
+      if (s && s.active === true) {
+        console.log('[billing] Polling detected active subscription — activating!');
+        _activatePro();
+      }
+    } catch(e) {}
+  }, 2000);
+
+  document.getElementById('btnSubscribe').onclick = () => launchGooglePlayBillingRaga();
+  applyProMaxStatus(false); // silent restore on launch — no toast
+
+updateTrialBar(); // init display
+
+// iOS Chrome: unlock AudioContext on first touch (required for audio to work)
+document.addEventListener('touchstart', function unlockAudio() {
+  const AudioCtx = window.AudioContext || window.webkitAudioContext;
+  if (AudioCtx) {
+    const tmpCtx = new AudioCtx();
+    tmpCtx.resume().then(() => tmpCtx.close());
+  }
+  document.removeEventListener('touchstart', unlockAudio);
+}, { once: true, passive: true });
+
+el('btnMic').onclick = async function() {
+  // Check mediaDevices API availability (may be absent on non-HTTPS or old browsers)
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    alert('Microphone API not available.\n\n' +
+      (isIOS()
+        ? '• Make sure you are on HTTPS\n• Try Safari if Chrome does not work on your iOS version'
+        : '• Use Chrome or Firefox\n• Ensure HTTPS is enabled'));
+    return;
+  }
+  if (isListening) {
+    isListening = false;
+    stopTrialTimer();
+    cancelAnimationFrame(animFrame);
+    if (mediaStream) mediaStream.getTracks().forEach(t => t.stop());
+    if (actx) { try { actx.close(); } catch(e) {} actx = null; }
+    el('pitchBox').classList.remove('active');
+    el('btnMic').classList.remove('listening');
+    el('swaraDisp').textContent = '-';
+    el('hzDisp').textContent = '0.0 Hz';
+    clearTimeout(swaraHoldTimer);
+    applyLang();
+    return;
+  }
+  if (trialEnded) {
+    document.getElementById('promaxOverlay').classList.add('show');
+    return;
+  }
+  try {
+    // iOS requires simple constraints; complex constraints fail on Safari iOS
+    // iOS Safari needs simple constraints; iOS Chrome & Android support full ones
+    const constraints = isSafariIOS()
+      ? { audio: true }
+      : { audio: { echoCancellation: false, autoGainControl: false, noiseSuppression: false } };
+
+    // Get mic stream first (must be inside user gesture for iOS)
+    mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
+
+    // Create AudioContext AFTER getUserMedia inside the same user gesture
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    actx = new AudioCtx();
+
+    // iOS Safari AND Chrome suspend AudioContext immediately — must resume it
+    if (actx.state === 'suspended') {
+      await actx.resume();
+    }
+    // iOS Chrome extra: wait a tick then resume again if still suspended
+    if (isIOSChrome() && actx.state === 'suspended') {
+      await new Promise(r => setTimeout(r, 100));
+      await actx.resume();
+    }
+
+    // Adapt buffer size to sample rate
+    const fftSize = actx.sampleRate >= 48000 ? 4096 : 2048;
+    buf = new Float32Array(fftSize);
+
+    analyser = actx.createAnalyser();
+    analyser.fftSize = fftSize;
+    analyser.smoothingTimeConstant = 0.72;
+
+    const source = actx.createMediaStreamSource(mediaStream);
+    source.connect(analyser);
+
+    if(trialEnded && !(typeof isProMaxUser === 'function' && isProMaxUser())) return;
+    isListening = true;
+	if(typeof isProMaxUser !== 'function' || !isProMaxUser()) startTrialTimer();
+    el('pitchBox').classList.add('active');
+    el('btnMic').classList.add('listening');
+    applyLang();
+    updatePitch();
+
+  } catch (e) {
+    console.error('Mic Error:', e);
+    isListening = false;
+	stopTrialTimer();
+    el('pitchBox').classList.remove('active');
+    el('btnMic').classList.remove('listening');
+    applyLang();
+
+    let msg = 'Microphone access denied or unavailable.\n\nEnsure you\'ve granted microphone permission in browser settings.';
+    if (isIOSChrome()) {
+      msg = '📱 iOS Chrome Microphone Error\n\n• Open Settings → Chrome → Microphone → Allow\n• Make sure the page is served over HTTPS\n• Try: Settings → Privacy & Security → Microphone → enable Chrome';
+    } else if (isSafariIOS()) {
+      msg = '📱 iOS Safari Microphone Error\n\n• Open Settings → Safari → Microphone → Allow\n• The page must be served over HTTPS or localhost';
+    } else if (window.location.protocol === 'file:') {
+      msg = 'Chrome blocks mic for file:// URLs.\n\nUse a local server (e.g. "python3 -m http.server") or host on GitHub Pages.';
+    }
+    alert(msg);
+  }
+};
+
+// ─── TRACE & RAGA UI ──────────────────────────────────────────────────────────
+function updateTraceUI() {
+  const box = el('traceBox');
+  if (box) box.innerHTML = '';
+  const ri = el('rootIndicator');
+  if (currentRoot === -1) { if (ri) ri.textContent = ''; return; }
+  if (ri) ri.textContent = '(Sa = ' + WESTERN_NOTES[currentRoot] + ')';
+  traceLog.forEach(pClass => {
+    const inter = (pClass - currentRoot + 12) % 12;
+    const s = document.createElement('span');
+    s.textContent = lang === 'en' ? SWARA_NAMES[inter] : (SWARA_KN[SWARA_NAMES[inter]] || SWARA_NAMES[inter]);
+    box.appendChild(s);
+  });
+}
+
+el('btnClear').onclick = () => {
+  sungPitchClasses.clear();
+  traceLog = [];
+  currentRoot = -1;
+  bestRoot = -1;
+  globalKrithis.clear();
+  
+  updateTraceUI();
+  findRagas();
+};
+
+function getRagaIntervals(raga, isJanya) {
+  const s = new Set();
+  if (isJanya) {
+    raga.intervalsAro.forEach(x => s.add(x % 12));
+    raga.intervalsAva.forEach(x => s.add(x % 12));
+  } else {
+    raga.intervals.forEach(x => s.add(x % 12));
+  }
+  return s;
+}
+
+function findRagas() {
+  const list = el('matchList');
+  if (sungPitchClasses.size === 0) {
+    list.innerHTML = `<div style="color:#666;font-size:0.8rem;text-align:center;margin-top:20px;">${I18N[lang].noNotes}</div>`;
+    renderKrithis();
+    return;
+  }
+
+  let allMatches = [];
+
+  for (let testRoot = 0; testRoot < 12; testRoot++) {
+    const relativeSung = new Set();
+    for (let p of sungPitchClasses) relativeSung.add((p - testRoot + 12) % 12);
+
+    const evaluateRaga = (r, type, isJanya) => {
+      const allowed = getRagaIntervals(r, isJanya);
+      let matchCount = 0, wrongCount = 0;
+
+      for (let item of relativeSung) {
+        if (allowed.has(item)) matchCount++;
+        else wrongCount++;
+      }
+      const missing = allowed.size - matchCount;
+      const allowedWrong = matchCount >= 5 ? 5 : (matchCount >= 4 ? 3 : 2);
+
+      if (matchCount >= 3 && wrongCount <= allowedWrong) {
+        let score = (matchCount * 4) - (wrongCount * 1.5) - (missing * 1.0);
+
+        if (missing === 0) score += 6;
+        if (wrongCount === 0) score += 3;
+
+        // --- Sequence awareness bonus ---
+        let seqScore = 0;
+        if (traceLog.length >= 3) {
+          const relTrace = traceLog.map(p => (p - testRoot + 12) % 12);
+          const cleanTrace = [];
+          for (let t of relTrace) { if(cleanTrace.length === 0 || cleanTrace[cleanTrace.length-1] !== t) cleanTrace.push(t); }
+
+          // Janya ragas have Aro/Ava, Melakarta just has intervals (scale)
+          const aro = isJanya ? r.intervalsAro : r.intervals;
+          const ava = isJanya ? r.intervalsAva : [...r.intervals].reverse();
+
+          let aroMatch = 0, avaMatch = 0;
+          let aIdx = 0, vIdx = 0;
+          for (let t of cleanTrace) {
+              if (t === (aro[aIdx]%12)) { aroMatch++; aIdx++; if(aIdx >= aro.length) break; }
+          }
+          // Same for ava, but from the end of the trace might be better, or just any subsequence
+          for (let t of cleanTrace) {
+              if (t === (ava[vIdx]%12)) { avaMatch++; vIdx++; if(vIdx >= ava.length) break; }
+          }
+
+          seqScore = (aroMatch + avaMatch) * 1.5;
+        }
+
+        score += seqScore;
+        // ---------------------------------
+
+        allMatches.push({
+          name: lang === 'en' ? r.en : r.kn,
+          nameEn: r.en, type, rootName: WESTERN_NOTES[testRoot],
+          matchCount, missing, wrong: wrongCount, score
+        });
+      }
+    };
+
+    RAGAS.forEach(r => evaluateRaga(r, 'Melakarta', false));
+    JANYA_RAGAS.forEach(r => evaluateRaga(r, 'Janya', true));
+  }
+
+  // Find Krithis across all roots
+  if (allMatches.length > 0) {
+    globalKrithis.clear();
+    for (let r = 0; r < 12; r++) findKrithi(r);
+    renderKrithis();
+  }
+
+  allMatches.sort((a, b) => {
+    if (b.score !== a.score) return b.score - a.score;
+    if (a.wrong !== b.wrong) return a.wrong - b.wrong;
+    return a.missing - b.missing;
+  });
+
+  // Deduplicate
+  const uniqueMatches = [];
+  const seenNames = new Set();
+  for (let m of allMatches) {
+    if (!seenNames.has(m.nameEn)) { seenNames.add(m.nameEn); uniqueMatches.push(m); }
+  }
+
+  list.innerHTML = '';
+  if (uniqueMatches.length === 0) {
+    list.innerHTML = `<div style="color:#ff5722;font-size:0.9rem;text-align:center;margin-top:10px;">Keep singing — more notes needed for identification!</div>`;
+    return;
+  }
+
+  if (uniqueMatches.length > 0 && sungPitchClasses.size >= 3) {
+    const topRootName = uniqueMatches[0].rootName;
+    bestRoot = WESTERN_NOTES.indexOf(topRootName);
+    if (bestRoot === -1) bestRoot = 0;
+  } else {
+    bestRoot = -1;
+  }
+  uniqueMatches.slice(0, 4).forEach((m, idx) => {
+    const d = document.createElement('div');
+    d.className = 'match-item' + (idx === 0 ? ' top-match' : '');
+
+    let infoTxt = '';
+    if (m.missing === 0 && m.wrong === 0) infoTxt = '<span style="color:#76ff03;">(Exact Match)</span>';
+    else {
+      const parts = [];
+      if (m.missing > 0) parts.push(`+${m.missing} missing`);
+      if (m.wrong > 0) parts.push(`<span style="color:#ff5722;">${m.wrong} wrong</span>`);
+      infoTxt = `<span style="color:#888;font-size:0.75rem;">(${parts.join(', ')})</span>`;
+    }
+    const bulb = idx === 0 ? '<span style="color:#76ff03;text-shadow:0 0 8px #76ff03;margin-right:10px;">🟢</span>' : '';
+    d.innerHTML = `<div style="display:flex;flex-direction:column;">
+      <div style="display:flex;align-items:center;">${bulb}<strong>${m.name}</strong><span style="margin-left:8px;">${infoTxt}</span></div>
+      <div style="color:#aaa;font-size:0.8rem;margin-top:4px;margin-left:${idx===0?'26px':'0'};">Calculated Sa = <strong>${m.rootName}</strong></div>
+    </div>
+    <div class="match-type" style="align-self:flex-start;margin-top:4px;">${m.type}</div>`;
+    list.appendChild(d);
+  });
+}
+
+// ─── KRITHI MATCHING ──────────────────────────────────────────────────────────
+let globalKrithis = new Set();
+
+function findKrithi(testRoot) {
+  if (traceLog.length < 4) return;
+  const relativeTrace = traceLog.map(p => (p - testRoot + 12) % 12);
+  KRITHIS.forEach(k => {
+    const pattern = k.seq;
+    let pIdx = 0;
+    for (let i = 0; i < relativeTrace.length; i++) {
+      if (relativeTrace[i] === pattern[pIdx]) {
+        pIdx++;
+        if (pIdx === pattern.length) { globalKrithis.add(k); break; }
+      }
+    }
+  });
+}
+
+function renderKrithis() {
+
+  const list = el('krithiList');
+  if (!list) return;
+  if (globalKrithis.size === 0) {
+    const tWait = (lang === 'kn') ? 'ಕೃತಿಗಳನ್ನು ಗುರುತಿಸಲು ಇನ್ನಷ್ಟು ಹಾಡಿ...' : 'Sing a longer phrase to identify compositions...';
+    const tNone = (lang === 'kn') ? 'ಯಾವ ಕೃತಿಯೂ ಹೊಂದಿಕೆಯಾಗುತ್ತಿಲ್ಲ.' : 'No compositions matched yet. Keep singing...';
+    list.innerHTML = traceLog.length < 4
+      ? `<div style="color:#666;font-size:0.8rem;text-align:center;margin-top:10px;" id="lblNoKrithi">${tWait}</div>`
+      : `<div style="color:#666;font-size:0.8rem;text-align:center;margin-top:10px;" id="lblNoKrithi">${tNone}</div>`;
+    return;
+  }
+  list.innerHTML = '';
+  globalKrithis.forEach(m => {
+    const d = document.createElement('div');
+    d.className = 'match-item top-match';
+    d.style.borderColor = '#00e5ff';
+    d.innerHTML = `<div style="display:flex;align-items:center;">
+      <span style="color:#00e5ff;text-shadow:0 0 8px #00e5ff;margin-right:10px;">🎵</span>
+      <div>
+        <strong style="color:#00e5ff;">${m.name}</strong>
+        <div style="color:#888;font-size:0.75rem;margin-top:2px;">${m.composer || ''}</div>
+      </div>
+    </div>
+    <div class="match-type" style="background:#003333;color:#00e5ff;border:1px solid #00e5ff;">${m.raga}</div>`;
+    list.appendChild(d);
+  });
+}
+
+
+applyLang();
+</script>
+</body>
+</html>
